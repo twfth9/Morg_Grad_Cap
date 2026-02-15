@@ -215,13 +215,6 @@
 		(roundrect_rratio 0.15)
 		(uuid "3e0f1f3e-53af-4567-b9b7-8373f89c9691")
 	)
-	(pad "2" smd roundrect
-		(at 2.5 0)
-		(size 3 6.3)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-		(roundrect_rratio 0.15)
-		(uuid "060a98d8-79fb-40b6-8abb-579de5416f36")
-	)
 	(embedded_fonts no)
 	(model "${KIPRJMOD}/New_Library.pretty/CDRH5D28NP-220NC.stp"
 		(offset
