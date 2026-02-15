@@ -2,7 +2,7 @@
 	(version 20250114)
 	(generator "eeschema")
 	(generator_version "9.0")
-	(uuid "cf466440-0d71-4801-9232-171d77ced833")
+	(uuid "1a9c0ab7-b8aa-4868-b4bb-2ad397655fd2")
 	(paper "B")
 	(lib_symbols
 		(symbol "Analog_Switch:CD4066BPW"
@@ -5392,16 +5392,16 @@
 					)
 				)
 				(pin output line
-					(at -22.86 -12.7 0)
+					(at -22.86 -15.24 0)
 					(length 3.81)
-					(name "CD"
+					(name "CHIP_DETECT"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "9"
+					(number "CD"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -7794,7 +7794,7 @@
 		(uuid "3e3fd346-a71a-4a77-a438-2598567aa714")
 	)
 	(junction
-		(at 287.02 165.1)
+		(at 280.67 165.1)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4b6f18c4-82e5-4a72-a68e-4e4f4a850c33")
@@ -7818,19 +7818,19 @@
 		(uuid "cb9f78f3-1c99-4c8d-b01e-1b6827c96e57")
 	)
 	(junction
-		(at 281.94 165.1)
+		(at 275.59 165.1)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cdc12a9a-953c-450b-875b-c2d8e33c5fbe")
 	)
 	(junction
-		(at 276.86 165.1)
+		(at 270.51 165.1)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "eff3bab6-82f9-498a-bc43-f61963282819")
 	)
 	(junction
-		(at 297.18 185.42)
+		(at 290.83 185.42)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f4efcac7-444b-44be-b95f-8baa265e2929")
@@ -7873,7 +7873,7 @@
 	)
 	(wire
 		(pts
-			(xy 292.1 180.34) (xy 316.23 180.34)
+			(xy 285.75 180.34) (xy 316.23 180.34)
 		)
 		(stroke
 			(width 0)
@@ -7893,7 +7893,7 @@
 	)
 	(wire
 		(pts
-			(xy 276.86 187.96) (xy 316.23 187.96)
+			(xy 270.51 187.96) (xy 316.23 187.96)
 		)
 		(stroke
 			(width 0)
@@ -7933,7 +7933,7 @@
 	)
 	(wire
 		(pts
-			(xy 276.86 165.1) (xy 276.86 167.64)
+			(xy 270.51 165.1) (xy 270.51 167.64)
 		)
 		(stroke
 			(width 0)
@@ -7953,7 +7953,7 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 175.26) (xy 281.94 193.04)
+			(xy 275.59 175.26) (xy 275.59 193.04)
 		)
 		(stroke
 			(width 0)
@@ -7963,7 +7963,7 @@
 	)
 	(wire
 		(pts
-			(xy 313.69 190.5) (xy 316.23 190.5)
+			(xy 308.61 190.5) (xy 316.23 190.5)
 		)
 		(stroke
 			(width 0)
@@ -8053,7 +8053,7 @@
 	)
 	(wire
 		(pts
-			(xy 262.89 165.1) (xy 276.86 165.1)
+			(xy 256.54 165.1) (xy 270.51 165.1)
 		)
 		(stroke
 			(width 0)
@@ -8083,7 +8083,7 @@
 	)
 	(wire
 		(pts
-			(xy 287.02 165.1) (xy 287.02 167.64)
+			(xy 280.67 165.1) (xy 280.67 167.64)
 		)
 		(stroke
 			(width 0)
@@ -8103,7 +8103,7 @@
 	)
 	(wire
 		(pts
-			(xy 313.69 198.12) (xy 313.69 190.5)
+			(xy 308.61 201.93) (xy 308.61 190.5)
 		)
 		(stroke
 			(width 0)
@@ -8113,7 +8113,7 @@
 	)
 	(wire
 		(pts
-			(xy 287.02 182.88) (xy 316.23 182.88)
+			(xy 280.67 182.88) (xy 316.23 182.88)
 		)
 		(stroke
 			(width 0)
@@ -8133,7 +8133,7 @@
 	)
 	(wire
 		(pts
-			(xy 276.86 175.26) (xy 276.86 187.96)
+			(xy 270.51 175.26) (xy 270.51 187.96)
 		)
 		(stroke
 			(width 0)
@@ -8143,7 +8143,7 @@
 	)
 	(wire
 		(pts
-			(xy 292.1 175.26) (xy 292.1 180.34)
+			(xy 285.75 175.26) (xy 285.75 180.34)
 		)
 		(stroke
 			(width 0)
@@ -8193,7 +8193,7 @@
 	)
 	(wire
 		(pts
-			(xy 297.18 185.42) (xy 316.23 185.42)
+			(xy 290.83 185.42) (xy 316.23 185.42)
 		)
 		(stroke
 			(width 0)
@@ -8203,7 +8203,7 @@
 	)
 	(wire
 		(pts
-			(xy 287.02 165.1) (xy 292.1 165.1)
+			(xy 280.67 165.1) (xy 285.75 165.1)
 		)
 		(stroke
 			(width 0)
@@ -8213,7 +8213,7 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 165.1) (xy 281.94 167.64)
+			(xy 275.59 165.1) (xy 275.59 167.64)
 		)
 		(stroke
 			(width 0)
@@ -8233,7 +8233,7 @@
 	)
 	(wire
 		(pts
-			(xy 287.02 185.42) (xy 297.18 185.42)
+			(xy 280.67 185.42) (xy 290.83 185.42)
 		)
 		(stroke
 			(width 0)
@@ -8243,7 +8243,7 @@
 	)
 	(wire
 		(pts
-			(xy 287.02 185.42) (xy 287.02 196.85)
+			(xy 280.67 185.42) (xy 280.67 196.85)
 		)
 		(stroke
 			(width 0)
@@ -8323,7 +8323,7 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 165.1) (xy 287.02 165.1)
+			(xy 275.59 165.1) (xy 280.67 165.1)
 		)
 		(stroke
 			(width 0)
@@ -8333,7 +8333,7 @@
 	)
 	(wire
 		(pts
-			(xy 276.86 165.1) (xy 281.94 165.1)
+			(xy 270.51 165.1) (xy 275.59 165.1)
 		)
 		(stroke
 			(width 0)
@@ -8343,7 +8343,7 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 193.04) (xy 316.23 193.04)
+			(xy 275.59 193.04) (xy 316.23 193.04)
 		)
 		(stroke
 			(width 0)
@@ -8363,7 +8363,7 @@
 	)
 	(wire
 		(pts
-			(xy 287.02 175.26) (xy 287.02 182.88)
+			(xy 280.67 175.26) (xy 280.67 182.88)
 		)
 		(stroke
 			(width 0)
@@ -8373,7 +8373,7 @@
 	)
 	(wire
 		(pts
-			(xy 297.18 185.42) (xy 297.18 196.85)
+			(xy 290.83 185.42) (xy 290.83 196.85)
 		)
 		(stroke
 			(width 0)
@@ -8403,7 +8403,7 @@
 	)
 	(wire
 		(pts
-			(xy 292.1 165.1) (xy 292.1 167.64)
+			(xy 285.75 165.1) (xy 285.75 167.64)
 		)
 		(stroke
 			(width 0)
@@ -8622,7 +8622,7 @@
 		(uuid "5092a777-0374-4ddc-a1f3-225cc0d5dcb4")
 	)
 	(label "SPI_CS_µSD"
-		(at 298.45 180.34 0)
+		(at 292.1 180.34 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8742,7 +8742,7 @@
 		(uuid "818529a3-a82c-4894-af3d-3d39193a0986")
 	)
 	(label "SAMD21_3V3"
-		(at 298.45 185.42 0)
+		(at 292.1 185.42 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8812,7 +8812,7 @@
 		(uuid "b856ea8b-0f2e-4a78-a792-9551f7b4d642")
 	)
 	(label "SAMD21_3V3"
-		(at 262.89 165.1 0)
+		(at 256.54 165.1 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8872,7 +8872,7 @@
 		(uuid "cc3da528-e204-443e-bb21-9817baf2c0e5")
 	)
 	(label "SPI_SCK_µSD"
-		(at 298.45 187.96 0)
+		(at 292.1 187.96 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8912,7 +8912,7 @@
 		(uuid "e7600fbd-9678-4bee-a643-35522ed8e13d")
 	)
 	(label "SPI_MOSI_µSD"
-		(at 298.45 182.88 0)
+		(at 292.1 182.88 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8942,7 +8942,7 @@
 		(uuid "f1755e57-2fa0-482e-9108-e48c4b7af1ce")
 	)
 	(label "SPI_MISO_µSD"
-		(at 298.45 193.04 0)
+		(at 292.1 193.04 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -9222,7 +9222,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 297.18 201.93 0)
+		(at 290.83 201.93 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -9232,7 +9232,7 @@
 		(fields_autoplaced yes)
 		(uuid "109d1d1a-f189-4b57-b8c1-ff7c45c941c2")
 		(property "Reference" "#PWR01115"
-			(at 297.18 208.28 0)
+			(at 290.83 208.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9241,7 +9241,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 297.18 206.0631 0)
+			(at 290.83 206.0631 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9250,7 +9250,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 297.18 201.93 0)
+			(at 290.83 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9259,7 +9259,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 297.18 201.93 0)
+			(at 290.83 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9268,7 +9268,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 297.18 201.93 0)
+			(at 290.83 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9438,7 +9438,7 @@
 	)
 	(symbol
 		(lib_id "Libraries:R_Network04_Split")
-		(at 281.94 171.45 0)
+		(at 275.59 171.45 0)
 		(mirror x)
 		(unit 2)
 		(exclude_from_sim no)
@@ -9447,7 +9447,7 @@
 		(dnp no)
 		(uuid "210c1660-a14b-422f-8f01-bddc0dab4bfa")
 		(property "Reference" "RN1101"
-			(at 279.146 171.45 90)
+			(at 272.796 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9455,7 +9455,7 @@
 			)
 		)
 		(property "Value" "47k"
-			(at 281.94 171.45 90)
+			(at 275.59 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9463,7 +9463,7 @@
 			)
 		)
 		(property "Footprint" "New_Library:RESCAXE80P320X160X70-8N"
-			(at 279.908 171.45 90)
+			(at 273.558 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9472,7 +9472,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.vishay.com/docs/31509/csc.pdf"
-			(at 281.94 171.45 0)
+			(at 275.59 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9481,7 +9481,7 @@
 			)
 		)
 		(property "Description" "4 resistor network, star topology, bussed resistors, split"
-			(at 281.94 171.45 0)
+			(at 275.59 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9490,7 +9490,7 @@
 			)
 		)
 		(property "DigiKey" "https://www.digikey.com/en/products/detail/bourns-inc/CAT16-4702F4LF/3593009?gclsrc=aw.ds&gad_source=1&gad_campaignid=20232005509&gbraid=0AAAAADrbLlgFniMAX4EmXBhjIpynkBnMo&gclid=EAIaIQobChMI74bJrq3akgMVxEP_AR3c7zlEEAQYAyABEgJu8vD_BwE"
-			(at 281.94 171.45 90)
+			(at 275.59 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9499,7 +9499,7 @@
 			)
 		)
 		(property "DigiKey Part" "CAT16-4702F4LFCT-ND"
-			(at 281.94 171.45 90)
+			(at 275.59 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9612,7 +9612,7 @@
 	)
 	(symbol
 		(lib_id "Libraries:R_Network04_Split")
-		(at 287.02 171.45 0)
+		(at 280.67 171.45 0)
 		(mirror x)
 		(unit 3)
 		(exclude_from_sim no)
@@ -9621,7 +9621,7 @@
 		(dnp no)
 		(uuid "36628e5a-5fbc-40f0-83c7-c07b62121bdb")
 		(property "Reference" "RN1101"
-			(at 284.226 171.45 90)
+			(at 277.876 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9629,7 +9629,7 @@
 			)
 		)
 		(property "Value" "47k"
-			(at 287.02 171.45 90)
+			(at 280.67 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9637,7 +9637,7 @@
 			)
 		)
 		(property "Footprint" "New_Library:RESCAXE80P320X160X70-8N"
-			(at 284.988 171.45 90)
+			(at 278.638 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9646,7 +9646,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.vishay.com/docs/31509/csc.pdf"
-			(at 287.02 171.45 0)
+			(at 280.67 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9655,7 +9655,7 @@
 			)
 		)
 		(property "Description" "4 resistor network, star topology, bussed resistors, split"
-			(at 287.02 171.45 0)
+			(at 280.67 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9664,7 +9664,7 @@
 			)
 		)
 		(property "DigiKey" "https://www.digikey.com/en/products/detail/bourns-inc/CAT16-4702F4LF/3593009?gclsrc=aw.ds&gad_source=1&gad_campaignid=20232005509&gbraid=0AAAAADrbLlgFniMAX4EmXBhjIpynkBnMo&gclid=EAIaIQobChMI74bJrq3akgMVxEP_AR3c7zlEEAQYAyABEgJu8vD_BwE"
-			(at 287.02 171.45 90)
+			(at 280.67 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9673,7 +9673,7 @@
 			)
 		)
 		(property "DigiKey Part" "CAT16-4702F4LFCT-ND"
-			(at 287.02 171.45 90)
+			(at 280.67 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9821,7 +9821,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 287.02 201.93 0)
+		(at 280.67 201.93 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -9831,7 +9831,7 @@
 		(fields_autoplaced yes)
 		(uuid "40c0bf44-d6e3-4181-96ad-35303c817ada")
 		(property "Reference" "#PWR01114"
-			(at 287.02 208.28 0)
+			(at 280.67 208.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9840,7 +9840,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 287.02 206.0631 0)
+			(at 280.67 206.0631 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9849,7 +9849,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 287.02 201.93 0)
+			(at 280.67 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9858,7 +9858,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 287.02 201.93 0)
+			(at 280.67 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9867,7 +9867,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 287.02 201.93 0)
+			(at 280.67 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10060,7 +10060,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Polarized_Small_US")
-		(at 297.18 199.39 0)
+		(at 290.83 199.39 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -10070,7 +10070,7 @@
 		(fields_autoplaced yes)
 		(uuid "4b1e6afd-078b-42cb-8c81-3d5eb52eb21e")
 		(property "Reference" "C1106"
-			(at 299.72 197.6881 0)
+			(at 293.37 197.6881 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10079,7 +10079,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 299.72 200.2281 0)
+			(at 293.37 200.2281 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10088,7 +10088,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 297.18 199.39 0)
+			(at 290.83 199.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10097,7 +10097,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 297.18 199.39 0)
+			(at 290.83 199.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10106,7 +10106,7 @@
 			)
 		)
 		(property "Description" "Polarized capacitor, small US symbol"
-			(at 297.18 199.39 0)
+			(at 290.83 199.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11066,7 +11066,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Small_US")
-		(at 287.02 199.39 0)
+		(at 280.67 199.39 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -11076,7 +11076,7 @@
 		(fields_autoplaced yes)
 		(uuid "a447574c-3629-48e3-9358-910e5b07ec82")
 		(property "Reference" "C1105"
-			(at 284.48 198.2469 0)
+			(at 278.13 198.2469 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11085,7 +11085,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 284.48 200.7869 0)
+			(at 278.13 200.7869 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11094,7 +11094,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 287.02 199.39 0)
+			(at 280.67 199.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11103,7 +11103,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 287.02 199.39 0)
+			(at 280.67 199.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11112,7 +11112,7 @@
 			)
 		)
 		(property "Description" "capacitor, small US symbol"
-			(at 287.02 199.39 0)
+			(at 280.67 199.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11242,7 +11242,7 @@
 	)
 	(symbol
 		(lib_id "Libraries:R_Network04_Split")
-		(at 292.1 171.45 180)
+		(at 285.75 171.45 180)
 		(unit 4)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11250,7 +11250,7 @@
 		(dnp no)
 		(uuid "ae6a6ce4-9df9-4652-bb39-2f4184c3181b")
 		(property "Reference" "RN1101"
-			(at 289.814 171.45 90)
+			(at 283.464 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11258,7 +11258,7 @@
 			)
 		)
 		(property "Value" "47k"
-			(at 292.1 171.45 90)
+			(at 285.75 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11266,7 +11266,7 @@
 			)
 		)
 		(property "Footprint" "New_Library:RESCAXE80P320X160X70-8N"
-			(at 294.132 171.45 90)
+			(at 287.782 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11275,7 +11275,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.vishay.com/docs/31509/csc.pdf"
-			(at 292.1 171.45 0)
+			(at 285.75 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11284,7 +11284,7 @@
 			)
 		)
 		(property "Description" "4 resistor network, star topology, bussed resistors, split"
-			(at 292.1 171.45 0)
+			(at 285.75 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11293,7 +11293,7 @@
 			)
 		)
 		(property "DigiKey" "https://www.digikey.com/en/products/detail/bourns-inc/CAT16-4702F4LF/3593009?gclsrc=aw.ds&gad_source=1&gad_campaignid=20232005509&gbraid=0AAAAADrbLlgFniMAX4EmXBhjIpynkBnMo&gclid=EAIaIQobChMI74bJrq3akgMVxEP_AR3c7zlEEAQYAyABEgJu8vD_BwE"
-			(at 292.1 171.45 90)
+			(at 285.75 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11302,7 +11302,7 @@
 			)
 		)
 		(property "DigiKey Part" "CAT16-4702F4LFCT-ND"
-			(at 292.1 171.45 90)
+			(at 285.75 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11450,7 +11450,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 313.69 198.12 0)
+		(at 308.61 201.93 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11459,7 +11459,7 @@
 		(fields_autoplaced yes)
 		(uuid "c51ec53b-d455-485d-a8b4-d3e17a1e0162")
 		(property "Reference" "#PWR01116"
-			(at 313.69 204.47 0)
+			(at 308.61 208.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11468,7 +11468,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 313.69 203.2 0)
+			(at 308.61 207.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11477,7 +11477,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 313.69 198.12 0)
+			(at 308.61 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11486,7 +11486,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 313.69 198.12 0)
+			(at 308.61 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11495,7 +11495,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 313.69 198.12 0)
+			(at 308.61 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12012,7 +12012,7 @@
 	)
 	(symbol
 		(lib_id "Libraries:R_Network04_Split")
-		(at 276.86 171.45 180)
+		(at 270.51 171.45 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12020,7 +12020,7 @@
 		(dnp no)
 		(uuid "edb46716-6e3a-4a9e-b773-6f5716a64408")
 		(property "Reference" "RN1101"
-			(at 274.32 171.958 90)
+			(at 267.97 171.958 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12028,7 +12028,7 @@
 			)
 		)
 		(property "Value" "47k"
-			(at 276.86 171.45 90)
+			(at 270.51 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12036,7 +12036,7 @@
 			)
 		)
 		(property "Footprint" "New_Library:RESCAXE80P320X160X70-8N"
-			(at 278.892 171.45 90)
+			(at 272.542 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12045,7 +12045,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.vishay.com/docs/31509/csc.pdf"
-			(at 276.86 171.45 0)
+			(at 270.51 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12054,7 +12054,7 @@
 			)
 		)
 		(property "Description" "4 resistor network, star topology, bussed resistors, split"
-			(at 276.86 171.45 0)
+			(at 270.51 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12063,7 +12063,7 @@
 			)
 		)
 		(property "DigiKey" "https://www.digikey.com/en/products/detail/bourns-inc/CAT16-4702F4LF/3593009?gclsrc=aw.ds&gad_source=1&gad_campaignid=20232005509&gbraid=0AAAAADrbLlgFniMAX4EmXBhjIpynkBnMo&gclid=EAIaIQobChMI74bJrq3akgMVxEP_AR3c7zlEEAQYAyABEgJu8vD_BwE"
-			(at 276.86 171.45 90)
+			(at 270.51 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12072,7 +12072,7 @@
 			)
 		)
 		(property "DigiKey Part" "CAT16-4702F4LFCT-ND"
-			(at 276.86 171.45 90)
+			(at 270.51 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12349,7 +12349,7 @@
 		(pin "7"
 			(uuid "b24b9c8a-ac1b-4d23-b95e-51e38ebdaa5e")
 		)
-		(pin "9"
+		(pin "CD"
 			(uuid "62ba3131-e914-4ae4-8ced-2dbf6cd2f6bb")
 		)
 		(instances
