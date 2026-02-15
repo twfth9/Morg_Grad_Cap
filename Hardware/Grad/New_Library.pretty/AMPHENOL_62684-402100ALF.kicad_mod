@@ -589,4 +589,15 @@
 		(uuid "51fa91e8-8aae-45d6-8c5f-922afbc5f06b")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/New_Library.pretty/62684-402100ALF.step"
+		(offset
+			(xyz 0 -1.6 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
 )
