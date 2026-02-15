@@ -1,0 +1,237 @@
+(footprint "CDRH5D28"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -5.588 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "1648f64a-de0c-48fe-88bc-0998b0e109ec")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "CDRH5D28"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "01f9951e-5c23-4ad4-8df2-ebc63cdc6b6f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "3195c40a-cf01-42fd-b80b-6021c4fb1664")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "86c58518-7cd9-44c8-978f-16cba9c64bba")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -0.6 2.75)
+		(end 0.55 2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "391b537b-54c1-423f-8cd3-c805ca0dc5d8")
+	)
+	(fp_line
+		(start -0.575 -2.75)
+		(end 0.575 -2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "149539a9-f550-4352-9055-6402ac2c2e99")
+	)
+	(fp_line
+		(start -0.575 -2.75)
+		(end 0.575 -2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "149539a9-f550-4352-9055-6402ac2c2e99")
+	)
+	(fp_line
+		(start -0.575 2.75)
+		(end 0.575 2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "391b537b-54c1-423f-8cd3-c805ca0dc5d8")
+	)
+	(fp_line
+		(start -2.75 2.25)
+		(end -2.75 -2.25)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "10f92ff7-b79f-4ec5-b753-c3235a428a4d")
+	)
+	(fp_line
+		(start -2.25 -2.75)
+		(end 2.25 -2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "12d6f391-47d5-43b0-a54c-e98892b6fc34")
+	)
+	(fp_line
+		(start 2.25 2.75)
+		(end -2.25 2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "25c56f62-aa9e-4b9b-ac94-2835029ed873")
+	)
+	(fp_line
+		(start 2.75 -2.25)
+		(end 2.75 2.25)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "d6e5dfe6-a6e2-41b2-b7a3-10a5ccc81404")
+	)
+	(fp_arc
+		(start -2.75 -2.25)
+		(mid -2.603553 -2.603553)
+		(end -2.25 -2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "be04e402-4821-47bc-929a-7b9439e03da8")
+	)
+	(fp_arc
+		(start -2.25 2.75)
+		(mid -2.603553 2.603553)
+		(end -2.75 2.25)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "fce6fc34-cb50-4a5b-b1c3-a387ab035958")
+	)
+	(fp_arc
+		(start 2.25 -2.75)
+		(mid 2.603553 -2.603553)
+		(end 2.75 -2.25)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "b3df7835-853e-46dd-ada2-16965f66fb3f")
+	)
+	(fp_arc
+		(start 2.75 2.25)
+		(mid 2.603553 2.603553)
+		(end 2.25 2.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "548d06cd-e202-4a4f-bc79-1e91d5e43bbf")
+	)
+	(fp_rect
+		(start -3.75 -3.75)
+		(end 3.75 3.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "f55acabe-3ab5-4696-8dcc-d6bbbb0cc0c0")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "728e5bff-b28f-40ae-9961-54bffe9645d3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -2.1 0)
+		(size 2.15 6.3)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.15)
+		(uuid "5dfbedb6-2b76-4229-9aa3-d108cce859d6")
+	)
+	(pad "2" smd roundrect
+		(at 2.075 0)
+		(size 2.15 6.3)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.15)
+		(uuid "3e0f1f3e-53af-4567-b9b7-8373f89c9691")
+	)
+	(pad "2" smd roundrect
+		(at 2.5 0)
+		(size 3 6.3)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.15)
+		(uuid "060a98d8-79fb-40b6-8abb-579de5416f36")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/New_Library.pretty/CDRH5D28NP-220NC.stp"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 90)
+		)
+	)
+)
