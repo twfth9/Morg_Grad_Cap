@@ -43,9 +43,9 @@ void Debug485Class::setTransmit() {
 
 void Debug485Class::begin(uint32_t baud) {
   begin(baud,
-        ESP32_RS485_DE_PIN,
-        ESP32_RS485_RX_PIN,
-        ESP32_RS485_TX_PIN,
+        PIN_RS485_DE,
+        PIN_RS485_RX,
+        PIN_RS485_TX,
         50,
         50,
         50);
@@ -56,9 +56,9 @@ void Debug485Class::begin(uint32_t baud,
                           uint16_t post_tx_us,
                           uint16_t turnaround_us) {
   begin(baud,
-        ESP32_RS485_DE_PIN,
-        ESP32_RS485_RX_PIN,
-        ESP32_RS485_TX_PIN,
+        PIN_RS485_DE,
+        PIN_RS485_RX,
+        PIN_RS485_TX,
         pre_tx_us,
         post_tx_us,
         turnaround_us);
@@ -215,6 +215,10 @@ size_t Debug485Class::printf(const char* fmt, ...) {
                        ? static_cast<size_t>(len)
                        : (sizeof(temp) - 1);
   return write(reinterpret_cast<const uint8_t*>(temp), toWrite);
+}
+
+void Debug485Class::writeRaw(const uint8_t* data, size_t len) {
+  sendRaw(data, len);
 }
 
 Debug485Class Debug485;

@@ -1,15 +1,16 @@
 #pragma once
 
 #include <Arduino.h>
+#include "HatPins.h"
 
 class Debug485Class : public Print {
 public:
   explicit Debug485Class(HardwareSerial& port = Serial1);
 
-  // Uses default pinmap from esp32_pinmap.h and default timings of 50/50/50 us.
+  // Uses default board pinmap from HatPins.h and default timings of 50/50/50 us.
   void begin(uint32_t baud = 115200);
 
-  // Uses default pinmap from esp32_pinmap.h with explicit timings.
+  // Uses default board pinmap from HatPins.h with explicit timings.
   void begin(uint32_t baud,
              uint16_t pre_tx_us,
              uint16_t post_tx_us,
@@ -48,6 +49,9 @@ public:
 
   using Print::write;
 
+  // Binary-safe transmit path for framed bus traffic.
+  void writeRaw(const uint8_t* data, size_t len);
+
 private:
   static constexpr size_t TX_BUF_SIZE = 256;
 
@@ -76,17 +80,3 @@ private:
 };
 
 extern Debug485Class Debug485;
-
-#pragma once
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define ESP32_RS485_TX_PIN   (11)  /* UART TX -> THVD1400D DI */
-#define ESP32_RS485_RX_PIN   (12)  /* THVD1400D RO -> UART RX */
-#define ESP32_RS485_DE_PIN   (21)  /* THVD1400D DE (HIGH=TX, LOW=RX) */
-
-#ifdef __cplusplus
-}
-#endif
