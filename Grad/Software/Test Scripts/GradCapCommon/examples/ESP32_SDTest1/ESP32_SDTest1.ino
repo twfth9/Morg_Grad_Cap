@@ -1,3 +1,6 @@
+// Test of ESP32-MicroSD card connection. Determines maximum read/write speeds
+// and maximum safe SPI clock. Prints results over RS485 bus to SAMD21 master.
+
 #include <Arduino.h>
 #include <SPI.h>
 
