@@ -16,7 +16,7 @@ void hat_spi_mux_begin(void)
   pinMode(PIN_SPI_CS1, OUTPUT); /* B */
   pinMode(PIN_SPI_CS0, OUTPUT); /* A (strap) */
 
-  /* Safe idle: select Y2 (unused/disconnected) => B=1, A=0 */
+  /* Safe idle: select Y2 (unused/disconnected) => B=0, A=1 */
   hat_spi_mux_disconnect();
 }
 
@@ -29,13 +29,13 @@ void hat_spi_mux_select(spi_target_t target)
       break;
 
     case SPI_TARGET_SD:
-      /* Y1: B=0, A=1 */
-      set_ab(1, 0);
+      /* Y1: B=1, A=0 */
+      set_ab(0, 1);
       break;
 
     case SPI_TARGET_DISCONNECT:
-      /* Y2: B=1, A=0 (unused output) */
-      set_ab(0, 1);
+      /* Y2: B=0, A=1 (unused output) */
+      set_ab(1, 0);
       break;
 
     case SPI_TARGET_LCD:
@@ -44,7 +44,7 @@ void hat_spi_mux_select(spi_target_t target)
       break;
 
     default:
-      set_ab(0, 1);
+      set_ab(1, 0);
       break;
   }
 

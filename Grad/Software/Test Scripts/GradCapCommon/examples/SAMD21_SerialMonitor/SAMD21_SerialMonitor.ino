@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "samd21_pinmap.h"
+#include "SAMD21_pinmap.h"
 #include "rs485_halfduplex_samd.h"
 
 /* ===== C-callable Arduino wrappers ===== */
