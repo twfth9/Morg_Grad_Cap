@@ -91,6 +91,10 @@ void lcd_display_off(void);
 void lcd_inversion_on(void);
 void lcd_inversion_off(void);
 
+void lcd_all_pixels_on(void);
+void lcd_all_pixels_off(void);
+void lcd_normal_display_on(void);
+
 /* -----------------------------
    Drawing helpers
    ----------------------------- */

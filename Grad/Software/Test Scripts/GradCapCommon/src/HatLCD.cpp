@@ -1,4 +1,4 @@
-#include "LCD.h"
+#include "HatLCD.h"
 
 #include <stdarg.h>
 #include <string.h>
@@ -18,10 +18,10 @@ extern "C" {
    ========================================================= */
 
 static esp_lcd_panel_handle_t g_rgb_panel = nullptr;
-static uint16_t *g_fb = nullptr;
+static uint8_t *g_fb = nullptr;
 static bool g_lcd_initialized = false;
 
-static lcd_config_t g_cfg = {
+static hat_lcd_config_t g_cfg = {
   .h_res = 480,
   .v_res = 480,
 
@@ -38,29 +38,53 @@ static lcd_config_t g_cfg = {
   .pclk_active_neg = false,
   .verbose = false,
 
-  .color_mode = LCD_COLOR_MODE_RGB565,
-  .channel_order = LCD_CHANNEL_ORDER_GRB
+  // Proven working configuration for this hat:
+  .color_mode = HAT_LCD_COLOR_MODE_RGB666,
+  .channel_order = HAT_LCD_CHANNEL_ORDER_RGB,
+  .serial_mode = HAT_LCD_SERIAL_MODE_9BIT
 };
 
+/*
+  16-bit bridge mapping into ST7701 RGB666 + MDT=1:
+
+    Peripheral bit 0  -> DB1
+    Peripheral bit 1  -> DB2
+    Peripheral bit 2  -> DB3
+    Peripheral bit 3  -> DB4
+    Peripheral bit 4  -> DB5
+    Peripheral bit 5  -> DB6
+    Peripheral bit 6  -> DB7
+    Peripheral bit 7  -> DB8
+    Peripheral bit 8  -> DB9
+    Peripheral bit 9  -> DB10
+    Peripheral bit 10 -> DB11
+    Peripheral bit 11 -> DB13
+    Peripheral bit 12 -> DB14
+    Peripheral bit 13 -> DB15
+    Peripheral bit 14 -> DB16
+    Peripheral bit 15 -> DB17
+
+  DB0 and DB12 are held low.
+*/
 static int g_lcd_data_gpios[16] = {
-  PIN_LCD_DB0,  PIN_LCD_DB1,  PIN_LCD_DB2,  PIN_LCD_DB3,
-  PIN_LCD_DB4,  PIN_LCD_DB5,  PIN_LCD_DB6,  PIN_LCD_DB7,
-  PIN_LCD_DB8,  PIN_LCD_DB9,  PIN_LCD_DB10, PIN_LCD_DB11,
-  PIN_LCD_DB12, PIN_LCD_DB13, PIN_LCD_DB14, PIN_LCD_DB15
+  PIN_LCD_DB1,  PIN_LCD_DB2,  PIN_LCD_DB3,  PIN_LCD_DB4,
+  PIN_LCD_DB5,  PIN_LCD_DB6,  PIN_LCD_DB7,  PIN_LCD_DB8,
+  PIN_LCD_DB9,  PIN_LCD_DB10, PIN_LCD_DB11, PIN_LCD_DB13,
+  PIN_LCD_DB14, PIN_LCD_DB15, PIN_LCD_DB16, PIN_LCD_DB17
 };
 
 /* =========================================================
    Debug helpers
    ========================================================= */
 
-static void lcd_log(const char *msg)
+static void hat_lcd_log(const char *msg)
 {
   if (g_cfg.verbose) {
     Debug485.println(msg);
   }
 }
 
-static void lcd_logf(const char *fmt, ...)
+static void hat_lcd_logf(const char *fmt, ...)
 {
   if (!g_cfg.verbose) return;
 
@@ -73,15 +97,15 @@ static void lcd_logf(const char *fmt, ...)
 }
 
 /* =========================================================
-   ST7701S low-level 9-bit SPI sideband
+   Low-level helpers
    ========================================================= */
 
-static inline void lcd_spi_delay(void)
+static inline void hat_lcd_spi_delay(void)
 {
-  delayMicroseconds(1);
+  delayMicroseconds(5);
 }
 
-static inline void lcd_bus_begin(void)
+static inline void hat_lcd_bus_begin(void)
 {
   pinMode(PIN_SPI_MOSI, OUTPUT);
   pinMode(PIN_SPI_SCK, OUTPUT);
@@ -90,46 +114,108 @@ static inline void lcd_bus_begin(void)
   digitalWrite(PIN_SPI_SCK, LOW);
 }
 
-static inline void lcd_select(void)
+static inline void hat_lcd_select(void)
 {
   hat_spi_mux_select_lcd();
 }
 
-static inline void lcd_deselect(void)
+static inline void hat_lcd_deselect(void)
 {
   hat_spi_mux_disconnect();
 }
 
-static inline void lcd_write_9bit(bool is_data, uint8_t value)
+static inline void hat_lcd_reset_pin_write(bool high)
 {
-  lcd_select();
+  digitalWrite(PIN_LCD_RESET, high ? HIGH : LOW);
+}
 
-  digitalWrite(PIN_SPI_SCK, LOW);
-  digitalWrite(PIN_SPI_MOSI, is_data ? HIGH : LOW);
-  lcd_spi_delay();
-  digitalWrite(PIN_SPI_SCK, HIGH);
-  lcd_spi_delay();
+static void hat_lcd_reset_pin_begin(void)
+{
+  pinMode(PIN_LCD_RESET, OUTPUT);
+  hat_lcd_reset_pin_write(true);
+}
 
-  for (uint8_t mask = 0x80; mask != 0; mask >>= 1) {
+static void hat_lcd_reset_assert(void)
+{
+  hat_lcd_reset_pin_write(false);
+}
+
+static void hat_lcd_reset_release(void)
+{
+  hat_lcd_reset_pin_write(true);
+}
+
+static void hat_lcd_hard_reset_internal(void)
+{
+  hat_lcd_reset_assert();
+  delay(20);
+  hat_lcd_reset_release();
+  delay(120);
+}
+
+static void hat_lcd_prepare_rgb666_16bit_bridge_pins(void)
+{
+  pinMode(PIN_LCD_DB0, OUTPUT);
+  digitalWrite(PIN_LCD_DB0, LOW);
+
+  pinMode(PIN_LCD_DB12, OUTPUT);
+  digitalWrite(PIN_LCD_DB12, LOW);
+}
+
+static inline void hat_lcd_shift_bits_msb(uint32_t value, uint8_t bit_count)
+{
+  for (int8_t bit = bit_count - 1; bit >= 0; --bit) {
     digitalWrite(PIN_SPI_SCK, LOW);
-    digitalWrite(PIN_SPI_MOSI, (value & mask) ? HIGH : LOW);
-    lcd_spi_delay();
+    digitalWrite(PIN_SPI_MOSI, (value & (1UL << bit)) ? HIGH : LOW);
+    hat_lcd_spi_delay();
     digitalWrite(PIN_SPI_SCK, HIGH);
-    lcd_spi_delay();
+    hat_lcd_spi_delay();
   }
 
   digitalWrite(PIN_SPI_SCK, LOW);
-  lcd_deselect();
 }
+
+static inline void hat_lcd_write_9bit(bool is_data, uint8_t value)
+{
+  hat_lcd_select();
+
+  uint16_t frame = ((is_data ? 1U : 0U) << 8) | value;
+  hat_lcd_shift_bits_msb(frame, 9);
+
+  hat_lcd_deselect();
+}
+
+static inline void hat_lcd_write_16bit(bool is_data, uint8_t value)
+{
+  hat_lcd_select();
+
+  uint16_t frame = (is_data ? 0x0100U : 0x0000U) | value;
+  hat_lcd_shift_bits_msb(frame, 16);
+
+  hat_lcd_deselect();
+}
+
+static inline void hat_lcd_write_serial(bool is_data, uint8_t value)
+{
+  if (g_cfg.serial_mode == HAT_LCD_SERIAL_MODE_16BIT) {
+    hat_lcd_write_16bit(is_data, value);
+  } else {
+    hat_lcd_write_9bit(is_data, value);
+  }
+}
+
+/* =========================================================
+   ST7701 helpers
+   ========================================================= */
 
 static inline void st7701_write_command(uint8_t cmd)
 {
-  lcd_write_9bit(false, cmd);
+  hat_lcd_write_serial(false, cmd);
 }
 
 static inline void st7701_write_data(uint8_t data)
 {
-  lcd_write_9bit(true, data);
+  hat_lcd_write_serial(true, data);
 }
 
 static inline void st7701_write_register1(uint8_t cmd, uint8_t d0)
@@ -171,16 +257,10 @@ static inline void st7701_select_bank(uint8_t bank)
   st7701_write_data(bank);
 }
 
-static inline void st7701_select_bank0(void)      { st7701_select_bank(0x10); }
-static inline void st7701_select_bank1(void)      { st7701_select_bank(0x11); }
-static inline void st7701_select_bank3(void)      { st7701_select_bank(0x13); }
-static inline void st7701_select_normal_page(void){ st7701_select_bank(0x00); }
-
-static inline void st7701_software_reset(void)
-{
-  st7701_write_command(0x01);
-  delay(150);
-}
+static inline void st7701_select_bank0(void)       { st7701_select_bank(0x10); }
+static inline void st7701_select_bank1(void)       { st7701_select_bank(0x11); }
+static inline void st7701_select_bank3(void)       { st7701_select_bank(0x13); }
+static inline void st7701_select_normal_page(void) { st7701_select_bank(0x00); }
 
 static inline void st7701_sleep_out(void)
 {
@@ -251,9 +331,9 @@ static void st7701_enable_rgb666(void)
   st7701_set_pixel_format(0x66);
 }
 
-static void st7701_set_color_mode_internal(lcd_color_mode_t mode)
+static void st7701_set_color_mode_internal(hat_lcd_color_mode_t mode)
 {
-  if (mode == LCD_COLOR_MODE_RGB666) {
+  if (mode == HAT_LCD_COLOR_MODE_RGB666) {
     st7701_enable_rgb666();
   } else {
     st7701_enable_rgb565();
@@ -265,7 +345,7 @@ static void st7701_set_rgb_interface_de_mode(bool vsync_active_high,
                                              bool pclk_sample_negative_edge,
                                              bool de_active_low)
 {
-  uint8_t rgbctrl0 = 0x00; /* DE mode */
+  uint8_t rgbctrl0 = 0x00;
 
   if (vsync_active_high)         rgbctrl0 |= (1 << 3);
   if (hsync_active_high)         rgbctrl0 |= (1 << 2);
@@ -279,10 +359,7 @@ static void st7701_set_rgb_interface_de_mode(bool vsync_active_high,
 
 static void st7701_init_sequence(void)
 {
-  lcd_log("Initializing ST7701S over SPI...");
-  lcd_bus_begin();
-  delay(120);
-  st7701_software_reset();
+  hat_lcd_log("Initializing ST7701S over SPI...");
 
   st7701_select_bank3();
   st7701_write_register1(0xEF, 0x08);
@@ -413,18 +490,18 @@ static void st7701_init_sequence(void)
    RGB panel init
    ========================================================= */
 
-static bool lcd_init_rgb_panel_internal(void)
+static bool hat_lcd_init_rgb_panel_internal(void)
 {
-  lcd_log("Initializing ESP32-S3 RGB panel peripheral...");
-  lcd_logf("Boot PSRAM size: %u\n", ESP.getPsramSize());
-  lcd_logf("Free heap before RGB init: %u\n", ESP.getFreeHeap());
-  lcd_logf("Total PSRAM: %u\n", ESP.getPsramSize());
-  lcd_logf("Free PSRAM before RGB init: %u\n", ESP.getFreePsram());
+  hat_lcd_log("Initializing ESP32-S3 RGB panel peripheral...");
+  hat_lcd_logf("Boot PSRAM size: %u\n", ESP.getPsramSize());
+  hat_lcd_logf("Free heap before RGB init: %u\n", ESP.getFreeHeap());
+  hat_lcd_logf("Total PSRAM: %u\n", ESP.getPsramSize());
+  hat_lcd_logf("Free PSRAM before RGB init: %u\n", ESP.getFreePsram());
 
   esp_lcd_rgb_panel_config_t panel_config = {};
   panel_config.data_width = 16;
   panel_config.clk_src = LCD_CLK_SRC_DEFAULT;
-  panel_config.bits_per_pixel = 0;
+  panel_config.bits_per_pixel = 16;
   panel_config.bounce_buffer_size_px = 10 * g_cfg.h_res;
 
   panel_config.disp_gpio_num  = -1;
@@ -451,22 +528,22 @@ static bool lcd_init_rgb_panel_internal(void)
   panel_config.flags.fb_in_psram = 1;
 
   esp_err_t err = esp_lcd_new_rgb_panel(&panel_config, &g_rgb_panel);
-  lcd_logf("esp_lcd_new_rgb_panel: %s (%d)\n", esp_err_to_name(err), (int)err);
+  hat_lcd_logf("esp_lcd_new_rgb_panel: %s (%d)\n", esp_err_to_name(err), (int)err);
   if (err != ESP_OK) return false;
 
   err = esp_lcd_panel_reset(g_rgb_panel);
-  lcd_logf("esp_lcd_panel_reset: %s (%d)\n", esp_err_to_name(err), (int)err);
+  hat_lcd_logf("esp_lcd_panel_reset: %s (%d)\n", esp_err_to_name(err), (int)err);
   if (err != ESP_OK) return false;
 
   err = esp_lcd_panel_init(g_rgb_panel);
-  lcd_logf("esp_lcd_panel_init: %s (%d)\n", esp_err_to_name(err), (int)err);
+  hat_lcd_logf("esp_lcd_panel_init: %s (%d)\n", esp_err_to_name(err), (int)err);
   if (err != ESP_OK) return false;
 
   err = esp_lcd_rgb_panel_get_frame_buffer(g_rgb_panel, 1, (void **)&g_fb);
-  lcd_logf("esp_lcd_rgb_panel_get_frame_buffer: %s (%d)\n", esp_err_to_name(err), (int)err);
+  hat_lcd_logf("esp_lcd_rgb_panel_get_frame_buffer: %s (%d)\n", esp_err_to_name(err), (int)err);
   if (err != ESP_OK || g_fb == nullptr) return false;
 
-  lcd_logf("Framebuffer ptr: %p\n", g_fb);
+  hat_lcd_logf("Framebuffer ptr: %p\n", g_fb);
   return true;
 }
 
@@ -474,201 +551,217 @@ static bool lcd_init_rgb_panel_internal(void)
    Public API
    ========================================================= */
 
-void lcd_get_default_config(lcd_config_t *cfg)
+void hat_lcd_get_default_config(hat_lcd_config_t *cfg)
 {
   if (!cfg) return;
   *cfg = g_cfg;
 }
 
-void lcd_set_config(const lcd_config_t *cfg)
+void hat_lcd_set_config(const hat_lcd_config_t *cfg)
 {
   if (!cfg) return;
   g_cfg = *cfg;
 }
 
-void lcd_set_verbose(bool verbose)
+void hat_lcd_set_verbose(bool verbose)
 {
   g_cfg.verbose = verbose;
 }
 
-void lcd_set_resolution(uint16_t h_res, uint16_t v_res)
+void hat_lcd_set_resolution(uint16_t h_res, uint16_t v_res)
 {
   g_cfg.h_res = h_res;
   g_cfg.v_res = v_res;
 }
 
-void lcd_set_pixel_clock(uint32_t pclk_hz)
+void hat_lcd_set_pixel_clock(uint32_t pclk_hz)
 {
   g_cfg.pclk_hz = pclk_hz;
 }
 
-void lcd_set_h_timing(uint16_t pulse, uint16_t back_porch, uint16_t front_porch)
+void hat_lcd_set_h_timing(uint16_t pulse, uint16_t back_porch, uint16_t front_porch)
 {
   g_cfg.hsync_pulse_width = pulse;
-  g_cfg.hsync_back_porch = back_porch;
+  g_cfg.hsync_back_porch  = back_porch;
   g_cfg.hsync_front_porch = front_porch;
 }
 
-void lcd_set_v_timing(uint16_t pulse, uint16_t back_porch, uint16_t front_porch)
+void hat_lcd_set_v_timing(uint16_t pulse, uint16_t back_porch, uint16_t front_porch)
 {
   g_cfg.vsync_pulse_width = pulse;
-  g_cfg.vsync_back_porch = back_porch;
+  g_cfg.vsync_back_porch  = back_porch;
   g_cfg.vsync_front_porch = front_porch;
 }
 
-void lcd_set_pclk_active_neg(bool active_neg)
+void hat_lcd_set_pclk_active_neg(bool active_neg)
 {
   g_cfg.pclk_active_neg = active_neg;
 }
 
-void lcd_set_color_mode(lcd_color_mode_t mode)
+void hat_lcd_set_color_mode(hat_lcd_color_mode_t mode)
 {
   g_cfg.color_mode = mode;
 }
 
-void lcd_set_channel_order(lcd_channel_order_t order)
+void hat_lcd_set_channel_order(hat_lcd_channel_order_t order)
 {
   g_cfg.channel_order = order;
 }
 
-lcd_channel_order_t lcd_get_channel_order(void)
+void hat_lcd_set_serial_mode(hat_lcd_serial_mode_t mode)
 {
-  return g_cfg.channel_order;
+  g_cfg.serial_mode = mode;
 }
 
-bool lcd_is_initialized(void)
+bool hat_lcd_is_initialized(void)
 {
   return g_lcd_initialized;
 }
 
-uint16_t lcd_width(void)
+uint16_t hat_lcd_width(void)
 {
   return g_cfg.h_res;
 }
 
-uint16_t lcd_height(void)
+uint16_t hat_lcd_height(void)
 {
   return g_cfg.v_res;
 }
 
-uint16_t *lcd_framebuffer(void)
+uint16_t *hat_lcd_framebuffer(void)
 {
-  return g_fb;
+  return (uint16_t *)g_fb;
 }
 
-bool lcd_begin_with_config(const lcd_config_t *cfg)
+bool hat_lcd_begin_with_config(const hat_lcd_config_t *cfg)
 {
   if (cfg) {
     g_cfg = *cfg;
   }
 
   hat_spi_mux_begin();
+  hat_lcd_reset_pin_begin();
+  hat_lcd_hard_reset_internal();
+  hat_lcd_bus_begin();
+
+  if (g_cfg.color_mode == HAT_LCD_COLOR_MODE_RGB666) {
+    hat_lcd_prepare_rgb666_16bit_bridge_pins();
+  }
+
   st7701_init_sequence();
 
-  if (!lcd_init_rgb_panel_internal()) {
+  if (!hat_lcd_init_rgb_panel_internal()) {
     return false;
   }
 
   g_lcd_initialized = true;
-  lcd_log("RGB peripheral initialized.");
   return true;
 }
 
-bool lcd_begin(void)
+bool hat_lcd_begin_verbose(bool verbose)
 {
-  return lcd_begin_with_config(nullptr);
+  hat_lcd_config_t cfg;
+  hat_lcd_get_default_config(&cfg);
+  cfg.verbose = verbose;
+  return hat_lcd_begin_with_config(&cfg);
 }
 
-void lcd_init(void)
+bool hat_lcd_begin(void)
 {
-  (void)lcd_begin();
+  return hat_lcd_begin_verbose(false);
 }
 
-void lcd_display_on(void)
+void hat_lcd_init(void)
+{
+  (void)hat_lcd_begin();
+}
+
+void hat_lcd_display_on(void)
 {
   st7701_display_on_cmd();
 }
 
-void lcd_display_off(void)
+void hat_lcd_display_off(void)
 {
   st7701_display_off_cmd();
 }
 
-void lcd_inversion_on(void)
+void hat_lcd_inversion_on(void)
 {
   st7701_inversion_on_cmd();
 }
 
-void lcd_inversion_off(void)
+void hat_lcd_inversion_off(void)
 {
   st7701_inversion_off_cmd();
 }
 
-void lcd_all_pixels_on(void)
+void hat_lcd_all_pixels_on(void)
 {
   st7701_all_pixels_on_cmd();
 }
 
-void lcd_all_pixels_off(void)
+void hat_lcd_all_pixels_off(void)
 {
   st7701_all_pixels_off_cmd();
 }
 
-void lcd_normal_display_on(void)
+void hat_lcd_normal_display_on(void)
 {
   st7701_normal_display_on_cmd();
 }
 
-uint16_t lcd_rgb565(uint8_t r, uint8_t g, uint8_t b)
+uint16_t hat_lcd_rgb565(uint8_t r, uint8_t g, uint8_t b)
 {
   return (uint16_t)(((r & 0xF8) << 8) |
                     ((g & 0xFC) << 3) |
                     ((b & 0xF8) >> 3));
 }
 
-uint16_t lcd_grb565(uint8_t g, uint8_t r, uint8_t b)
+uint16_t hat_lcd_color(uint8_t c0, uint8_t c1, uint8_t c2)
 {
-  return lcd_rgb565(r, g, b);
-}
-
-uint16_t lcd_color(uint8_t c0, uint8_t c1, uint8_t c2)
-{
-  if (g_cfg.channel_order == LCD_CHANNEL_ORDER_GRB) {
-    return lcd_rgb565(c1, c0, c2);
+  if (g_cfg.channel_order == HAT_LCD_CHANNEL_ORDER_GRB) {
+    return hat_lcd_rgb565(c1, c0, c2);
   }
-  return lcd_rgb565(c0, c1, c2);
+  return hat_lcd_rgb565(c0, c1, c2);
 }
 
-void lcd_fill_screen(uint16_t color)
+static inline void hat_lcd_write_pixel_raw(size_t pixel_index, uint16_t color565)
+{
+  if (!g_fb) return;
+  ((uint16_t *)g_fb)[pixel_index] = color565;
+}
+
+void hat_lcd_fill_screen(uint16_t color)
 {
   if (!g_fb) return;
 
   const size_t pixel_count = (size_t)g_cfg.h_res * (size_t)g_cfg.v_res;
   for (size_t i = 0; i < pixel_count; ++i) {
-    g_fb[i] = color;
+    hat_lcd_write_pixel_raw(i, color);
   }
 }
 
-void lcd_show_color(uint16_t color)
+void hat_lcd_show_color(uint16_t color)
 {
-  lcd_fill_screen(color);
+  hat_lcd_fill_screen(color);
 }
 
-void lcd_clear(void)
+void hat_lcd_clear(void)
 {
-  lcd_fill_screen(0x0000);
+  hat_lcd_fill_screen(0x0000);
 }
 
-void lcd_draw_pixel(int16_t x, int16_t y, uint16_t color)
+void hat_lcd_draw_pixel(int16_t x, int16_t y, uint16_t color)
 {
   if (!g_fb) return;
   if (x < 0 || y < 0) return;
   if (x >= (int16_t)g_cfg.h_res || y >= (int16_t)g_cfg.v_res) return;
 
-  g_fb[(size_t)y * g_cfg.h_res + (size_t)x] = color;
+  hat_lcd_write_pixel_raw((size_t)y * g_cfg.h_res + (size_t)x, color);
 }
 
-void lcd_draw_hline(int16_t x, int16_t y, int16_t w, uint16_t color)
+void hat_lcd_draw_hline(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
   if (!g_fb) return;
   if (y < 0 || y >= (int16_t)g_cfg.v_res || w <= 0) return;
@@ -682,11 +775,11 @@ void lcd_draw_hline(int16_t x, int16_t y, int16_t w, uint16_t color)
 
   size_t row = (size_t)y * g_cfg.h_res;
   for (int16_t xx = x0; xx <= x1; ++xx) {
-    g_fb[row + (size_t)xx] = color;
+    hat_lcd_write_pixel_raw(row + (size_t)xx, color);
   }
 }
 
-void lcd_draw_vline(int16_t x, int16_t y, int16_t h, uint16_t color)
+void hat_lcd_draw_vline(int16_t x, int16_t y, int16_t h, uint16_t color)
 {
   if (!g_fb) return;
   if (x < 0 || x >= (int16_t)g_cfg.h_res || h <= 0) return;
@@ -699,11 +792,11 @@ void lcd_draw_vline(int16_t x, int16_t y, int16_t h, uint16_t color)
   if (y0 > y1) return;
 
   for (int16_t yy = y0; yy <= y1; ++yy) {
-    g_fb[(size_t)yy * g_cfg.h_res + (size_t)x] = color;
+    hat_lcd_write_pixel_raw((size_t)yy * g_cfg.h_res + (size_t)x, color);
   }
 }
 
-void lcd_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+void hat_lcd_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
   if (!g_fb) return;
   if (w <= 0 || h <= 0) return;
@@ -723,12 +816,12 @@ void lcd_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
   for (int16_t yy = y0; yy <= y1; ++yy) {
     size_t row = (size_t)yy * g_cfg.h_res;
     for (int16_t xx = x0; xx <= x1; ++xx) {
-      g_fb[row + (size_t)xx] = color;
+      hat_lcd_write_pixel_raw(row + (size_t)xx, color);
     }
   }
 }
 
-void lcd_draw_bitmap_rgb565(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels)
+void hat_lcd_draw_bitmap_rgb565(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels)
 {
   if (!g_fb || !pixels) return;
   if (w <= 0 || h <= 0) return;
@@ -741,16 +834,16 @@ void lcd_draw_bitmap_rgb565(int16_t x, int16_t y, int16_t w, int16_t h, const ui
       int16_t dx = x + xx;
       if (dx < 0 || dx >= (int16_t)g_cfg.h_res) continue;
 
-      g_fb[(size_t)dy * g_cfg.h_res + (size_t)dx] =
-          pixels[(size_t)yy * (size_t)w + (size_t)xx];
+      hat_lcd_write_pixel_raw((size_t)dy * g_cfg.h_res + (size_t)dx,
+                              pixels[(size_t)yy * (size_t)w + (size_t)xx]);
     }
   }
 }
 
-void lcd_draw_bitmap_rgb565_scaled(int16_t x, int16_t y,
-                                   int16_t src_w, int16_t src_h,
-                                   const uint16_t *pixels,
-                                   int16_t dst_w, int16_t dst_h)
+void hat_lcd_draw_bitmap_rgb565_scaled(int16_t x, int16_t y,
+                                       int16_t src_w, int16_t src_h,
+                                       const uint16_t *pixels,
+                                       int16_t dst_w, int16_t dst_h)
 {
   if (!g_fb || !pixels) return;
   if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) return;
@@ -766,25 +859,25 @@ void lcd_draw_bitmap_rgb565_scaled(int16_t x, int16_t y,
       if (dx < 0 || dx >= (int16_t)g_cfg.h_res) continue;
 
       int16_t sx = (int32_t)xx * src_w / dst_w;
-      g_fb[(size_t)dy * g_cfg.h_res + (size_t)dx] =
-          pixels[(size_t)sy * (size_t)src_w + (size_t)sx];
+      hat_lcd_write_pixel_raw((size_t)dy * g_cfg.h_res + (size_t)dx,
+                              pixels[(size_t)sy * (size_t)src_w + (size_t)sx]);
     }
   }
 }
 
-void lcd_draw_vertical_bars(void)
+void hat_lcd_draw_vertical_bars(void)
 {
   if (!g_fb) return;
 
   const uint16_t colors[] = {
-    lcd_color(255,   0,   0),
-    lcd_color(  0, 255,   0),
-    lcd_color(  0,   0, 255),
-    lcd_color(255, 255, 255),
-    lcd_color(255, 255,   0),
-    lcd_color(255,   0, 255),
-    lcd_color(  0, 255, 255),
-    lcd_color(  0,   0,   0)
+    hat_lcd_color(255,   0,   0),
+    hat_lcd_color(  0, 255,   0),
+    hat_lcd_color(  0,   0, 255),
+    hat_lcd_color(255, 255, 255),
+    hat_lcd_color(255, 255,   0),
+    hat_lcd_color(255,   0, 255),
+    hat_lcd_color(  0, 255, 255),
+    hat_lcd_color(  0,   0,   0)
   };
   const uint16_t bar_count = (uint16_t)(sizeof(colors) / sizeof(colors[0]));
   const uint16_t bar_width = g_cfg.h_res / bar_count;
@@ -793,24 +886,24 @@ void lcd_draw_vertical_bars(void)
     for (uint16_t x = 0; x < g_cfg.h_res; ++x) {
       uint16_t idx = x / bar_width;
       if (idx >= bar_count) idx = bar_count - 1;
-      g_fb[(size_t)y * g_cfg.h_res + x] = colors[idx];
+      hat_lcd_write_pixel_raw((size_t)y * g_cfg.h_res + x, colors[idx]);
     }
   }
 }
 
-void lcd_draw_horizontal_bars(void)
+void hat_lcd_draw_horizontal_bars(void)
 {
   if (!g_fb) return;
 
   const uint16_t colors[] = {
-    lcd_color(255,   0,   0),
-    lcd_color(  0, 255,   0),
-    lcd_color(  0,   0, 255),
-    lcd_color(255, 255, 255),
-    lcd_color(255, 255,   0),
-    lcd_color(255,   0, 255),
-    lcd_color(  0, 255, 255),
-    lcd_color(  0,   0,   0)
+    hat_lcd_color(255,   0,   0),
+    hat_lcd_color(  0, 255,   0),
+    hat_lcd_color(  0,   0, 255),
+    hat_lcd_color(255, 255, 255),
+    hat_lcd_color(255, 255,   0),
+    hat_lcd_color(255,   0, 255),
+    hat_lcd_color(  0, 255, 255),
+    hat_lcd_color(  0,   0,   0)
   };
   const uint16_t bar_count = (uint16_t)(sizeof(colors) / sizeof(colors[0]));
   const uint16_t bar_height = g_cfg.v_res / bar_count;
@@ -820,24 +913,24 @@ void lcd_draw_horizontal_bars(void)
     if (idx >= bar_count) idx = bar_count - 1;
 
     for (uint16_t x = 0; x < g_cfg.h_res; ++x) {
-      g_fb[(size_t)y * g_cfg.h_res + x] = colors[idx];
+      hat_lcd_write_pixel_raw((size_t)y * g_cfg.h_res + x, colors[idx]);
     }
   }
 }
 
-void lcd_draw_checkerboard(uint16_t color_a, uint16_t color_b, uint16_t cell_size)
+void hat_lcd_draw_checkerboard(uint16_t color_a, uint16_t color_b, uint16_t cell_size)
 {
   if (!g_fb || cell_size == 0) return;
 
   for (uint16_t y = 0; y < g_cfg.v_res; ++y) {
     for (uint16_t x = 0; x < g_cfg.h_res; ++x) {
       bool sel = (((x / cell_size) + (y / cell_size)) & 1) != 0;
-      g_fb[(size_t)y * g_cfg.h_res + x] = sel ? color_a : color_b;
+      hat_lcd_write_pixel_raw((size_t)y * g_cfg.h_res + x, sel ? color_a : color_b);
     }
   }
 }
 
-void lcd_draw_gradient(void)
+void hat_lcd_draw_gradient(void)
 {
   if (!g_fb) return;
 
@@ -846,7 +939,30 @@ void lcd_draw_gradient(void)
       uint8_t r = (uint8_t)((x * 255UL) / (g_cfg.h_res - 1));
       uint8_t g = (uint8_t)((y * 255UL) / (g_cfg.v_res - 1));
       uint8_t b = (uint8_t)(((x + y) * 255UL) / (g_cfg.h_res + g_cfg.v_res - 2));
-      g_fb[(size_t)y * g_cfg.h_res + x] = lcd_color(r, g, b);
+      hat_lcd_write_pixel_raw((size_t)y * g_cfg.h_res + x, hat_lcd_color(r, g, b));
     }
   }
+}
+
+void hat_lcd_show_reference_colors(uint32_t dwell_ms)
+{
+  hat_lcd_log("Reference color: BLACK");
+  hat_lcd_fill_screen(0x0000);
+  delay(dwell_ms);
+
+  hat_lcd_log("Reference color: WHITE");
+  hat_lcd_fill_screen(0xFFFF);
+  delay(dwell_ms);
+
+  hat_lcd_log("Reference color: RED");
+  hat_lcd_fill_screen(0xF800);
+  delay(dwell_ms);
+
+  hat_lcd_log("Reference color: GREEN");
+  hat_lcd_fill_screen(0x07E0);
+  delay(dwell_ms);
+
+  hat_lcd_log("Reference color: BLUE");
+  hat_lcd_fill_screen(0x001F);
+  delay(dwell_ms);
 }
