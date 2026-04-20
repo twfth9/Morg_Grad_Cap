@@ -53,7 +53,7 @@ static bool jpg_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *b
 
 void setup()
 {
-  Debug485.begin(115200);
+  Debug485.begin(9600);
   Debug485.println();
   Debug485.println("[JPEG_TEST] Starting.");
 

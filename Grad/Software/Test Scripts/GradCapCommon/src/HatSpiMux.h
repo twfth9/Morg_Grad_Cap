@@ -1,3 +1,10 @@
+/*
+ * File: HatSpiMux.h
+ * Description: C-style interface for the SPI target multiplexer that selects the flash, SD card, LCD sideband, or a disconnected idle state on the shared SPI bus.
+ * Function count: 2 public API functions, 4 inline convenience helpers, and 1 enum
+ * Target microcontroller: ESP32
+ */
+
 #pragma once
 #include <Arduino.h>
 #include "HatPins.h"
@@ -41,15 +48,33 @@ typedef enum {
 } spi_target_t;
 
 /* Call once in setup(), after boot */
+/* Initialize the SPI target multiplexer after boot and drive it to a safe disconnected idle state.
+   Input: None.
+   Output: None. */
 void hat_spi_mux_begin(void);
 
 /* Select one of the four states above */
+/* Select which SPI target is connected to the shared bus.
+   Input: Desired SPI target enum value.
+   Output: None. */
 void hat_spi_mux_select(spi_target_t target);
 
 /* Convenience helpers */
+/* Convenience helper that connects the external flash chip to the shared SPI bus.
+   Input: None.
+   Output: None. */
 static inline void hat_spi_mux_select_flash(void) { hat_spi_mux_select(SPI_TARGET_FLASH); }
+/* Convenience helper that connects the microSD path to the shared SPI bus.
+   Input: None.
+   Output: None. */
 static inline void hat_spi_mux_select_sd(void)    { hat_spi_mux_select(SPI_TARGET_SD); }
+/* Convenience helper that disconnects all active SPI peripherals from the shared bus.
+   Input: None.
+   Output: None. */
 static inline void hat_spi_mux_disconnect(void)   { hat_spi_mux_select(SPI_TARGET_DISCONNECT); }
+/* Convenience helper that connects the LCD serial sideband interface to the shared SPI bus.
+   Input: None.
+   Output: None. */
 static inline void hat_spi_mux_select_lcd(void)   { hat_spi_mux_select(SPI_TARGET_LCD); }
 
 #ifdef __cplusplus

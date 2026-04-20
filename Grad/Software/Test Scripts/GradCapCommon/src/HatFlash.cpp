@@ -1,3 +1,10 @@
+/*
+ * File: HatFlash.cpp
+ * Description: Implementation of the external SPI flash driver and test helpers for the hat board. Coordinates SPI bus selection through HatSpiMux and performs raw command transactions.
+ * Function count: 39 functions/helpers
+ * Target microcontroller: ESP32
+ */
+
 #include "HatFlash.h"
 
 #include "HatPins.h"

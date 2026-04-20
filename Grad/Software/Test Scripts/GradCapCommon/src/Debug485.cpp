@@ -1,3 +1,10 @@
+/*
+ * File: Debug485.cpp
+ * Description: Implementation of the Debug485Class RS-485 debug transport for ESP32 nodes. Handles DE timing, line buffering, optional prefixes, and raw framed writes.
+ * Function count: 20 methods/functions plus 1 global instance
+ * Target microcontroller: ESP32
+ */
+
 #include "Debug485.h"
 
 #include <stdarg.h>
@@ -17,6 +24,7 @@ Debug485Class::Debug485Class(HardwareSerial& port)
       _txLen(0),
       _atLineStart(true) {}
 
+/* Configure the ESP32 UART and DE pin used for RS-485 debug traffic. */
 void Debug485Class::configureBus(uint32_t baud, int de_pin, int rx_pin, int tx_pin) {
   _dePin = de_pin;
   _rxPin = rx_pin;
@@ -29,18 +37,21 @@ void Debug485Class::configureBus(uint32_t baud, int de_pin, int rx_pin, int tx_p
   delay(10);
 }
 
+/* Place the RS-485 transceiver into receive mode and allow turnaround time. */
 void Debug485Class::setReceive() {
   if (_dePin < 0) return;
   digitalWrite(_dePin, LOW);
   delayMicroseconds(_turnaroundUs);
 }
 
+/* Place the RS-485 transceiver into transmit mode and wait the configured pre-TX delay. */
 void Debug485Class::setTransmit() {
   if (_dePin < 0) return;
   digitalWrite(_dePin, HIGH);
   delayMicroseconds(_preTxUs);
 }
 
+/* Initialize Debug485 using the default hat RS-485 pin mapping and timing values. */
 void Debug485Class::begin(uint32_t baud) {
   begin(baud,
         PIN_RS485_DE,
@@ -51,6 +62,7 @@ void Debug485Class::begin(uint32_t baud) {
         50);
 }
 
+/* Initialize Debug485 using explicit timing values while keeping the default hat RS-485 pin mapping. */
 void Debug485Class::begin(uint32_t baud,
                           uint16_t pre_tx_us,
                           uint16_t post_tx_us,
@@ -64,6 +76,7 @@ void Debug485Class::begin(uint32_t baud,
         turnaround_us);
 }
 
+/* Initialize Debug485 using explicit timing values while keeping the default hat RS-485 pin mapping. */
 void Debug485Class::begin(uint32_t baud,
                           int de_pin,
                           int rx_pin,
@@ -83,6 +96,7 @@ void Debug485Class::begin(uint32_t baud,
   _atLineStart = true;
 }
 
+/* Update the DE timing values used around each Debug485 transmission. */
 void Debug485Class::setTimings(uint16_t pre_tx_us,
                                uint16_t post_tx_us,
                                uint16_t turnaround_us) {
@@ -91,34 +105,41 @@ void Debug485Class::setTimings(uint16_t pre_tx_us,
   _turnaroundUs = turnaround_us;
 }
 
+/* Store a line prefix that will be transmitted automatically at the start of each new line. */
 void Debug485Class::setPrefix(const char* prefix) {
   _prefix = prefix;
 }
 
+/* Clear any previously configured automatic line prefix. */
 void Debug485Class::clearPrefix() {
   _prefix = nullptr;
 }
 
+/* Discard buffered transmit data and reset line-start tracking. */
 void Debug485Class::clear() {
   _txLen = 0;
   _atLineStart = true;
 }
 
+/* Return the number of bytes waiting in the receive buffer. */
 int Debug485Class::available() {
   if (!_begun) return 0;
   return _serial->available();
 }
 
+/* Read one byte from the receive buffer. */
 int Debug485Class::read() {
   if (!_begun) return -1;
   return _serial->read();
 }
 
+/* Peek at the next byte in the receive buffer without consuming it. */
 int Debug485Class::peek() {
   if (!_begun) return -1;
   return _serial->peek();
 }
 
+/* Forward all pending received bytes to another Stream. */
 void Debug485Class::flushRxTo(Stream& out) {
   while (available() > 0) {
     int c = read();
@@ -128,6 +149,7 @@ void Debug485Class::flushRxTo(Stream& out) {
   }
 }
 
+/* Immediately transmit a raw block of bytes over RS-485. */
 void Debug485Class::sendRaw(const uint8_t* data, size_t len) {
   if (!_begun || data == nullptr || len == 0) {
     return;
@@ -140,6 +162,7 @@ void Debug485Class::sendRaw(const uint8_t* data, size_t len) {
   setReceive();
 }
 
+/* Flush the current line buffer, inserting the optional prefix if needed. */
 void Debug485Class::flushBuffer() {
   if (!_begun || _txLen == 0) {
     return;
@@ -154,10 +177,12 @@ void Debug485Class::flushBuffer() {
   _txLen = 0;
 }
 
+/* Public flush wrapper for the internal line buffer. */
 void Debug485Class::flush() {
   flushBuffer();
 }
 
+/* Append one character to the buffered text stream and flush on newline. */
 void Debug485Class::appendChar(char c) {
   if (_txLen >= TX_BUF_SIZE - 1) {
     flushBuffer();
@@ -177,12 +202,14 @@ void Debug485Class::appendChar(char c) {
   }
 }
 
+/* Queue one byte for buffered Debug485 transmission. */
 size_t Debug485Class::write(uint8_t b) {
   if (!_begun) return 0;
   appendChar(static_cast<char>(b));
   return 1;
 }
 
+/* Queue a block of bytes for buffered Debug485 transmission. */
 size_t Debug485Class::write(const uint8_t* buffer, size_t size) {
   if (!_begun || buffer == nullptr || size == 0) {
     return 0;
@@ -195,6 +222,7 @@ size_t Debug485Class::write(const uint8_t* buffer, size_t size) {
   return size;
 }
 
+/* Format a message with printf-style arguments and queue it for transmission. */
 size_t Debug485Class::printf(const char* fmt, ...) {
   if (!_begun || fmt == nullptr) {
     return 0;
@@ -217,6 +245,7 @@ size_t Debug485Class::printf(const char* fmt, ...) {
   return write(reinterpret_cast<const uint8_t*>(temp), toWrite);
 }
 
+/* Public binary-safe transmit wrapper that bypasses line buffering. */
 void Debug485Class::writeRaw(const uint8_t* data, size_t len) {
   sendRaw(data, len);
 }

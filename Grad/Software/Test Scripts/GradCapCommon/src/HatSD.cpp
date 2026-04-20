@@ -1,3 +1,10 @@
+/*
+ * File: HatSD.cpp
+ * Description: Implementation of the HatSD microSD helper class. Manages SPI mux selection, filesystem access, test-pattern verification, and throughput measurements.
+ * Function count: 14 class methods plus 3 static helper functions and 1 global instance
+ * Target microcontroller: ESP32
+ */
+
 #include "HatSD.h"
 #include <stdarg.h>
 #include <stdlib.h>

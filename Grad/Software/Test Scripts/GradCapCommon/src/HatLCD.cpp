@@ -1,3 +1,10 @@
+/*
+ * File: HatLCD.cpp
+ * Description: Implementation of the hat LCD driver for the ESP32-S3 and ST7701S-based panel. Combines serial command-side initialization with RGB framebuffer output and drawing utilities.
+ * Function count: 79 functions/helpers
+ * Target microcontroller: ESP32
+ */
+
 #include "HatLCD.h"
 
 #include <stdarg.h>

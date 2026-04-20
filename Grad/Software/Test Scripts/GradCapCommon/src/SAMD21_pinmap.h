@@ -1,4 +1,13 @@
+/*
+ * File: SAMD21_pinmap.h
+ * Description: Pin map for the SAMD21 companion microcontroller board. Defines SPI, RS-485, button, frame-sync, microSD control, and NeoPixel connections.
+ * Function count: 0 functions; pin definitions only
+ * Target microcontroller: SAMD21
+ */
+
 #pragma once
+
+/* Pin map only: this file contains SAMD21 board-level GPIO assignments and does not declare callable functions. */
 
 #ifdef __cplusplus
 extern "C" {

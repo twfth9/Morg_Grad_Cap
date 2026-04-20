@@ -1,4 +1,13 @@
+/*
+ * File: HatPins.h
+ * Description: Central pin map for the ESP32 display hat board. Collects LCD, SPI, RS-485, and other board-level pin assignments in one header.
+ * Function count: 0 functions; pin definitions only
+ * Target microcontroller: ESP32
+ */
+
 #pragma once
+
+/* Pin map only: this file contains board-level GPIO assignments and does not declare callable functions. */
 #include <Arduino.h>  // provides pinMode(), digitalWrite(), HIGH/LOW, etc.
 
 /* =======================
