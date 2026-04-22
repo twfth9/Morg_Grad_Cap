@@ -4,10 +4,10 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include "HatPins.h"
-#include "HatSpiMux.h"
+#include "ESP32_Pinmap.h"
+#include "ESP32_SpiMux.h"
 #include "Debug485.h"
-#include "HatSD.h"
+#include "ESP32_SD.h"
 
 static const uint32_t kSweepFreqs[] = {
   400000,    // safe init-ish speed

@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "HatSpiMux.h"
+#include "ESP32_SpiMux.h"
 
 static uint32_t last_ms = 0;
 static uint8_t state = 0;

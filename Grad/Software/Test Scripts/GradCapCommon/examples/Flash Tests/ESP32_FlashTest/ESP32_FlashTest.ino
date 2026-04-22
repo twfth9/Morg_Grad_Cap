@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "Debug485.h"
-#include "HatSpiMux.h"
+#include "ESP32_SpiMux.h"
 #include "HatFlash.h"
 
 static const uint32_t kSweepHz[] = {
